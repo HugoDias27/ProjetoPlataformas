@@ -42,6 +42,7 @@ return [
             'showScriptName' => false,
             'rules' => [
                 'frontend/login' => 'frontend/site/login',
+                'backend/index' => 'backend/site/index',
              ],
         ],
     ],
