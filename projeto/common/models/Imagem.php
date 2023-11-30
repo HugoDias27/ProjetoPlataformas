@@ -1,19 +1,34 @@
 <?php
+
 namespace common\models;
 
 use Yii;
-use yii\db\ActiveRecord;
-use yii\web\UploadedFile;
+use yii\validators\FileValidator;
 
-class Imagem extends ActiveRecord
+/**
+ * This is the model class for table "imagens".
+ *
+ * @property int $id
+ * @property string $filename
+ * @property int $produto_id
+ *
+ * @property Produto $produto
+ */
+class Imagem extends \yii\db\ActiveRecord
 {
-    public $imagem;
 
+    public $imagem;
+    /**
+     * {@inheritdoc}
+     */
     public static function tableName()
     {
         return 'imagens';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function rules()
     {
         return [
@@ -25,6 +40,9 @@ class Imagem extends ActiveRecord
         ];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function attributeLabels()
     {
         return [
@@ -34,26 +52,25 @@ class Imagem extends ActiveRecord
         ];
     }
 
+    /**
+     * Gets query for [[Produto]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
     public function getProduto()
     {
         return $this->hasOne(Produto::class, ['id' => 'produto_id']);
     }
 
-    public function upload($produtoId)
+    public function upload()
     {
         if ($this->validate()) {
-            foreach ($this->imagem as $file) {
-                $newImagem = new Imagem();
-                $newImagem->filename = $file->baseName . '.' . $file->extension;
-                $newImagem->produto_id = $produtoId;
-                $newImagem->save();
+            foreach ($this->Imagem as $item)
+            $item->saveAs('uploads/' . $item->filename->baseName . '.' . $item->extension);
 
-                $file->saveAs('uploads/' . $file->baseName . '.' . $file->extension);
-            }
             return true;
         } else {
             return false;
         }
     }
 }
-

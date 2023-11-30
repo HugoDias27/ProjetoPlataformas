@@ -143,7 +143,7 @@ class ImagemController extends Controller
         $model = new Imagem();
 
         if (Yii::$app->request->isPost) {
-            $model->imagem = UploadedFile::getInstances($model, 'imagem');
+            $model->imageFiles = UploadedFile::getInstances($model, 'imagem');
             if ($model->upload()) {
                 $model->filename = $this->filename->baseName . '.' . $this->extension;
                 $model->save();

@@ -7,7 +7,6 @@ use common\models\Imagem;
 use common\models\Iva;
 use common\models\Produto;
 use common\models\ProdutoSearch;
-use Yii;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
@@ -106,46 +105,20 @@ class ProdutoController extends Controller
         $categoriaList = Categoria::find()->all();
         $categoriaItems = ArrayHelper::map($categoriaList, 'id', 'descricao');
 
+
         if ($this->request->isPost) {
-            $model->load($this->request->post());
-            if ($model->save()) {
-                Yii::$app->session->set('produtoId', $model->id); // Guarda o ID do produto na sessão
-                $modelImg->imagem = UploadedFile::getInstances($modelImg, 'imagem'); // Use o campo 'imagem' aqui
-                if ($modelImg->upload($model->id)) {
-                    return $this->redirect(['view', 'id' => $model->id]);
-                }
+            if ($model->load($this->request->post()) && $model->save()) {
+
+                return $this->redirect(['view', 'id' => $model->id]);
             }
+        } else {
+            $model->loadDefaultValues();
         }
 
         return $this->render('create', [
-            'model' => $model,
-            'ivaItems' => $ivaItems,
-            'categoriaItems' => $categoriaItems,
-            'modelImg' => $modelImg,
+            'model' => $model,'ivaItems' => $ivaItems, 'categoriaItems'=> $categoriaItems,'modelImg' => $modelImg
         ]);
     }
-
-
-
-    public function actionUpload()
-    {
-        $modelImg = new Imagem();
-        $produtoId = Yii::$app->session->get('produtoId'); // Obtém o ID do produto da sessão
-
-        if (Yii::$app->request->isPost) {
-            $modelImg->imagem = UploadedFile::getInstances($modelImg, 'imagem'); // Use o campo 'imagem' aqui
-            if ($modelImg->upload($produtoId)) {
-                // As imagens foram carregadas com sucesso
-                // Faça o que for necessário aqui após o carregamento das imagens
-                return $this->redirect(['view', 'id' => $produtoId]); // Redireciona para a página de visualização do produto
-            }
-        }
-
-        return $this->render('upload', ['modelImg' => $modelImg]);
-    }
-
-
-
 
     /**
      * Updates an existing Produto model.
