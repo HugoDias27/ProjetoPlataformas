@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use common\models\UploadForm;
 use common\models\Imagem;
 use common\models\ImagemSearch;
 use common\models\Produto;
@@ -71,22 +72,23 @@ class ImagemController extends Controller
      */
 
 
-    public function actionCreate()
+    public function actionCreate($produto_id)
     {
-        $model = new Imagem();
+        $image = new Imagem();
+        $uploadForm = new UploadForm();
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+        if (Yii::$app->request->isPost) {
+            $uploadForm->imageFiles = UploadedFile::getInstances($image, 'imageFiles');
+            $uploadForm->produto_id = $produto_id;
+
+            if ($uploadForm->upload()) {
+                return $this->redirect(['produto/view', 'id' => $produto_id]);
             }
-        } else {
-            $model->loadDefaultValues();
         }
 
-        return $this->render('create', [
-            'model' => $model,
-        ]);
+        return $this->render('create', ['image' => $image]);
     }
+
 
     /**
      * Updates an existing Imagem model.
@@ -138,19 +140,5 @@ class ImagemController extends Controller
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 
-    public function actionUpload()
-    {
-        $model = new Imagem();
 
-        if (Yii::$app->request->isPost) {
-            $model->imageFiles = UploadedFile::getInstances($model, 'imagem');
-            if ($model->upload()) {
-                $model->filename = $this->filename->baseName . '.' . $this->extension;
-                $model->save();
-                return;
-            }
-        }
-
-        return $this->render('produto/create', ['model' => $model]);
-    }
 }

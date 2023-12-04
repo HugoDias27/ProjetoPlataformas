@@ -3,7 +3,6 @@
 namespace common\models;
 
 use Yii;
-use yii\validators\FileValidator;
 
 /**
  * This is the model class for table "imagens".
@@ -16,8 +15,8 @@ use yii\validators\FileValidator;
  */
 class Imagem extends \yii\db\ActiveRecord
 {
+    public $imageFiles;
 
-    public $imagem;
     /**
      * {@inheritdoc}
      */
@@ -32,7 +31,7 @@ class Imagem extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['filename'], 'file', 'skipOnEmpty' => false, 'extensions'=>'png,jpg', 'maxFiles' => 3],
+            [['imageFiles'], 'file', 'skipOnEmpty' => false, 'extensions' => 'png, jpg, jpeg, webp', 'maxFiles' => 4],
             [['filename', 'produto_id'], 'required'],
             [['produto_id'], 'integer'],
             [['filename'], 'string', 'max' => 60],
@@ -60,17 +59,5 @@ class Imagem extends \yii\db\ActiveRecord
     public function getProduto()
     {
         return $this->hasOne(Produto::class, ['id' => 'produto_id']);
-    }
-
-    public function upload()
-    {
-        if ($this->validate()) {
-            foreach ($this->Imagem as $item)
-            $item->saveAs('uploads/' . $item->filename->baseName . '.' . $item->extension);
-
-            return true;
-        } else {
-            return false;
-        }
     }
 }

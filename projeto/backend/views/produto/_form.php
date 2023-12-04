@@ -25,8 +25,6 @@ use yii\widgets\ActiveForm;
 
     <?=$form->field($model, 'iva_id')->dropDownList($ivaItems, ['prompt' => 'Selecione...']); ?>
 
-    <?= $form->field($modelImg, 'imagem[]')->fileInput(['multiple' => true, 'accept' => 'image/*']) ?>
-
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
     </div>

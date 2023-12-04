@@ -28,22 +28,27 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
             'id',
             'nome',
             'prescricao_medica',
             'preco',
             'quantidade',
-            //'categoria_id',
-            //'iva_id',
             [
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, Produto $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'id' => $model->id]);
-                 }
+                'class' => 'yii\grid\ActionColumn',
+                'template' => '{view} {update} {delete} {add-image}',
+                'buttons' => [
+                    'add-image' => function ($url, $model, $key) {
+                        return Html::a(
+                            '<icon class="fas fa-solid fa-image"></icon>',
+                            Url::to(['imagem/create', 'produto_id' => $model->id]),
+                            [
+                                'title' => 'Adicionar Imagem',
+                            ]
+                        );
+                    },
+                ],
             ],
         ],
     ]); ?>
-
 
 </div>

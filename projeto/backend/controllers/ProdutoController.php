@@ -7,6 +7,7 @@ use common\models\Imagem;
 use common\models\Iva;
 use common\models\Produto;
 use common\models\ProdutoSearch;
+use Yii;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
@@ -97,7 +98,6 @@ class ProdutoController extends Controller
     public function actionCreate()
     {
         $model = new Produto();
-        $modelImg = new Imagem();
 
         $ivaList = Iva::find()->where(['vigor' => 1])->all();
         $ivaItems = ArrayHelper::map($ivaList, 'id', 'percentagem');
@@ -105,20 +105,20 @@ class ProdutoController extends Controller
         $categoriaList = Categoria::find()->all();
         $categoriaItems = ArrayHelper::map($categoriaList, 'id', 'descricao');
 
-
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-
-                return $this->redirect(['view', 'id' => $model->id]);
+            $model->load($this->request->post());
+            if ($model->save()) {
+                return $this->redirect('index');
             }
-        } else {
-            $model->loadDefaultValues();
         }
 
         return $this->render('create', [
-            'model' => $model,'ivaItems' => $ivaItems, 'categoriaItems'=> $categoriaItems,'modelImg' => $modelImg
+            'model' => $model,
+            'ivaItems' => $ivaItems,
+            'categoriaItems' => $categoriaItems,
         ]);
     }
+
 
     /**
      * Updates an existing Produto model.
@@ -131,12 +131,19 @@ class ProdutoController extends Controller
     {
         $model = $this->findModel($id);
 
+        $ivaList = Iva::find()->where(['vigor' => 1])->all();
+        $ivaItems = ArrayHelper::map($ivaList, 'id', 'percentagem');
+
+        $categoriaList = Categoria::find()->all();
+        $categoriaItems = ArrayHelper::map($categoriaList, 'id', 'descricao');
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
             'model' => $model,
+            'ivaItems' => $ivaItems,
+            'categoriaItems' => $categoriaItems,
         ]);
     }
 
