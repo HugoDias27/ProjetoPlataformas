@@ -44,7 +44,7 @@
                         'icon' => 'nav-icon fas fa-edit',
                         'items' => [
                             ['label' => 'Gerir medicamentos', 'url' => ['produto/index'], 'icon' => 'fa-solid fa-pills'],
-                            ['label' => 'Gerir categorias', 'url' => ['categoria/index'], 'icon' => 'fa-solid fa-pills'],
+                            ['label' => 'Gerir categorias', 'url' => ['categoria/index'], 'icon' => 'fa-solid fa-folder'],
                             ['label' => 'Gerir vendas', 'url' => ['venda/index'], 'icon' => 'fa-solid fa-money-bill'],
                             ['label' => 'Gerir serviços', 'url' => ['servico/index'], 'icon' => 'fas fa-mail-bulk'],
                             ['label' => 'Gerir fornecedor', 'url' => ['fornecedor/index'], 'icon' => 'fas fa-truck', 'style' =>'color: #ffffff'],

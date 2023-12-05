@@ -25,12 +25,6 @@ use yii\widgets\ActiveForm;
 
     <?=$form->field($model, 'iva_id')->dropDownList($ivaItems, ['prompt' => 'Selecione...']); ?>
 
-    <?= $form->field($fornecedorProduto, 'data_importacao')->input('date') ?>
-
-    <?= $form->field($fornecedorProduto, 'hora_importacao')->input('time') ?>
-
-    <?= $form->field($fornecedorProduto, 'fornecedor_id')->dropDownList($fornecedores, ['prompt' => 'Selecione...']) ?>
-
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

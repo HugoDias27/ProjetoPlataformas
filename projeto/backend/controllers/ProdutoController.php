@@ -2,6 +2,8 @@
 
 namespace backend\controllers;
 
+use backend\models\Fornecedor;
+use backend\models\FornecedorProduto;
 use common\models\Categoria;
 use common\models\Imagem;
 use common\models\Iva;
@@ -85,9 +87,7 @@ class ProdutoController extends Controller
      */
     public function actionView($id)
     {
-
-        $model = $this->findModel($id);
-
+        $imagemArray = [];
         $imagens = Imagem::find()->where(['produto_id' => $id])->all();
         foreach ($imagens as $imagem) {
             $imagem->filename = Yii::getAlias('@web') . '/uploads/' . $imagem->filename;
@@ -97,6 +97,7 @@ class ProdutoController extends Controller
         return $this->render('view', [
             'model' => $this->findModel($id),'imagemArray' => $imagemArray,
         ]);
+
     }
 
     /**
@@ -107,6 +108,9 @@ class ProdutoController extends Controller
     public function actionCreate()
     {
         $model = new Produto();
+        $fornecedorProduto = new FornecedorProduto();
+        $fornecedoresList = Fornecedor::find()->all();
+        $fornecedores = ArrayHelper::map($fornecedoresList, 'id', 'nome');
 
         $ivaList = Iva::find()->where(['vigor' => 1])->all();
         $ivaItems = ArrayHelper::map($ivaList, 'id', 'percentagem');
@@ -114,10 +118,22 @@ class ProdutoController extends Controller
         $categoriaList = Categoria::find()->all();
         $categoriaItems = ArrayHelper::map($categoriaList, 'id', 'descricao');
 
+        $post = $this->request->post();
+
         if ($this->request->isPost) {
             $model->load($this->request->post());
+
             if ($model->save()) {
-                return $this->redirect('index');
+                // Agora que o produto foi salvo, obtemos o ID gerado
+                $fornecedorProduto->produto_id = $model->id;
+                $fornecedorProduto->data_importacao = $post['FornecedorProduto']['data_importacao'];
+                $fornecedorProduto->fornecedor_id = $post['FornecedorProduto']['fornecedor_id'];
+                $fornecedorProduto->hora_importacao = $post['FornecedorProduto']['hora_importacao'];
+                $fornecedorProduto->quantidade = $post['Produto']['quantidade'];
+
+                if ($fornecedorProduto->save()) {
+                    return $this->redirect(['index']);
+                }
             }
         }
 
@@ -125,8 +141,11 @@ class ProdutoController extends Controller
             'model' => $model,
             'ivaItems' => $ivaItems,
             'categoriaItems' => $categoriaItems,
+            'fornecedorProduto' => $fornecedorProduto,
+            'fornecedores' => $fornecedores
         ]);
     }
+
 
 
     /**
