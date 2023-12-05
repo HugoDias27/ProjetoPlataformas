@@ -183,7 +183,16 @@ class ProdutoController extends Controller
      */
     public function actionDelete($id)
     {
+
+        $imagens = Imagem::find()->where(['produto_id' => $id])->all();
+        foreach ($imagens as $imagem) {
+            $imagem->delete();
+        }
+        $FornecedorProduto = FornecedorProduto::find()->where(['produto_id' => $id])->one();
+        $FornecedorProduto->delete();
         $this->findModel($id)->delete();
+
+
 
         return $this->redirect(['index']);
     }
