@@ -2,16 +2,16 @@
 
 namespace backend\controllers;
 
-use common\models\Profile;
-use common\models\ProfileSearch;
+use common\models\Fatura;
+use common\models\FaturaSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * ProfileController implements the CRUD actions for Profile model.
+ * FaturaController implements the CRUD actions for Fatura model.
  */
-class ProfileController extends Controller
+class FaturaController extends Controller
 {
     /**
      * @inheritDoc
@@ -32,13 +32,13 @@ class ProfileController extends Controller
     }
 
     /**
-     * Lists all Profile models.
+     * Lists all Fatura models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new ProfileSearch();
+        $searchModel = new FaturaSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
@@ -48,7 +48,7 @@ class ProfileController extends Controller
     }
 
     /**
-     * Displays a single Profile model.
+     * Displays a single Fatura model.
      * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
@@ -61,21 +61,13 @@ class ProfileController extends Controller
     }
 
     /**
-     * Creates a new Profile model.
+     * Creates a new Fatura model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate($id)
+    public function actionCreate()
     {
-        $model = Profile::findOne(['user_id' => $id]);
-
-        if ($model !== null) {
-            // Se um perfil já existe para este usuário, redirecionar para a página inicial (index)
-            return $this->redirect(['user/index']); // Substitua 'index' pelo nome da sua ação de página inicial
-        }
-
-        $model = new Profile();
-        $model->user_id = $id;
+        $model = new Fatura();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
@@ -91,7 +83,7 @@ class ProfileController extends Controller
     }
 
     /**
-     * Updates an existing Profile model.
+     * Updates an existing Fatura model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
      * @return string|\yii\web\Response
@@ -101,34 +93,17 @@ class ProfileController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model !== null) {
-            $post = $this->request->post();
-
-            if ($this->request->isPost && $model->load($post) && $model->save()) {
-                $model->save();
-
-                return $this->redirect('index');
-            }
-            if ($model->n_utente == null) {
-                $mostra_n_utente = 1;
-            } else {
-                $mostra_n_utente = 0;
-            }
-            if ($model->nif == null) {
-                $mostra_nif = 1;
-            } else {
-                $mostra_nif = 0;
-            }
-        } else {
-            return $this->redirect(['create', 'id' => $id]);
+        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->id]);
         }
-        return $this->render('update', ['model' => $model, 'mostra_n_utente' => $mostra_n_utente, 'mostra_nif' => $mostra_nif]);
 
+        return $this->render('update', [
+            'model' => $model,
+        ]);
     }
 
-
     /**
-     * Deletes an existing Profile model.
+     * Deletes an existing Fatura model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
      * @return \yii\web\Response
@@ -142,15 +117,15 @@ class ProfileController extends Controller
     }
 
     /**
-     * Finds the Profile model based on its primary key value.
+     * Finds the Fatura model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
-     * @return Profile the loaded model
+     * @return Fatura the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Profile::findOne(['user_id' => $id])) !== null) {
+        if (($model = Fatura::findOne(['id' => $id])) !== null) {
             return $model;
         }
 

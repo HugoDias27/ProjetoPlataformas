@@ -4,7 +4,6 @@ namespace backend\controllers;
 
 use common\models\ReceitaMedica;
 use common\models\ReceitaMedicaSearch;
-use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -28,25 +27,10 @@ class ReceitaController extends Controller
                         'delete' => ['POST'],
                     ],
                 ],
-                'access' => [
-                    'class' => AccessControl::className(),
-                    'rules' => [
-                        [
-                            'actions' => ['index', 'view', 'create', 'update'],
-                            'allow' => true,
-                            'roles' => ['admin', 'funcionario'],
-                        ],
-                        [
-                            'actions' => ['delete'],
-                            'allow' => true,
-                            'roles' => ['admin'],
-                        ],
-                    ],
-                ],
-
             ]
         );
     }
+
     /**
      * Lists all ReceitaMedica models.
      *

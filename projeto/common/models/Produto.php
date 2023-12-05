@@ -3,7 +3,6 @@
 namespace common\models;
 
 use backend\models\Fornecedor;
-use backend\models\FornecedorProduto;
 use Yii;
 
 /**
@@ -18,7 +17,7 @@ use Yii;
  * @property int $iva_id
  *
  * @property Categoria $categoria
- * @property FornecedorProduto[] $fornecedoresProdutos
+ * @property FornecedoresProduto[] $fornecedoresProdutos
  * @property Fornecedor[] $fornecedors
  * @property Imagem[] $imagens
  * @property Iva $iva
@@ -86,7 +85,7 @@ class Produto extends \yii\db\ActiveRecord
      */
     public function getFornecedoresProdutos()
     {
-        return $this->hasMany(FornecedorProduto::class, ['produto_id' => 'id']);
+        return $this->hasMany(FornecedoresProduto::class, ['produto_id' => 'id']);
     }
 
     /**
@@ -96,7 +95,7 @@ class Produto extends \yii\db\ActiveRecord
      */
     public function getFornecedors()
     {
-        return $this->hasMany(Fornecedor::class, ['id' => 'fornecedor_id'])->viaTable('fornecedores_produtos', ['produto_id' => 'id']);
+        return $this->hasMany(Fornecedore::class, ['id' => 'fornecedor_id'])->viaTable('fornecedores_produtos', ['produto_id' => 'id']);
     }
 
     /**
@@ -106,7 +105,7 @@ class Produto extends \yii\db\ActiveRecord
      */
     public function getImagens()
     {
-        return $this->hasMany(Imagem::class, ['produto_id' => 'id']);
+        return $this->hasMany(Imagen::class, ['produto_id' => 'id']);
     }
 
     /**

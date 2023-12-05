@@ -13,7 +13,7 @@ use Yii;
  * @property int $telefone
  * @property string $email
  *
- * @property FornecedorProduto[] $fornecedoresProdutos
+ * @property FornecedoresProduto[] $fornecedoresProdutos
  * @property Produto[] $produtos
  */
 class Fornecedor extends \yii\db\ActiveRecord
