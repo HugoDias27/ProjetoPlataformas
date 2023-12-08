@@ -2,14 +2,20 @@
 
 namespace backend\controllers;
 
+use backend\models\Estabelecimento;
 use common\models\Fatura;
 use common\models\FaturaSearch;
+use common\models\Profile;
+use common\models\User;
+use Yii;
+use yii\filters\AccessControl;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * FaturaController implements the CRUD actions for Fatura model.
+ * FaturaController implements the CRUD actions for fatura model.
  */
 class FaturaController extends Controller
 {
@@ -25,30 +31,70 @@ class FaturaController extends Controller
                     'class' => VerbFilter::className(),
                     'actions' => [
                         'delete' => ['POST'],
+
+
                     ],
                 ],
+                'access' => [
+                    'class' => AccessControl::className(),
+                    'rules' => [
+                        [
+                            'actions' => ['view','index', 'create', 'delete'],
+                            'allow' => true,
+                            'roles' => ['funcionario', 'admin'],
+                        ],
+                        [
+                            'actions' => ['view'],
+                            'allow' => true,
+                            'roles' => ['cliente'],
+                        ]
+                    ],
+                ],
+
             ]
         );
     }
 
     /**
-     * Lists all Fatura models.
+     * Lists all fatura models.
      *
      * @return string
      */
     public function actionIndex()
     {
+
         $searchModel = new FaturaSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
+
+        $estabelecimentos = Estabelecimento::find()->all();
+        $estabelecimentosItems = ArrayHelper::map($estabelecimentos, 'id', 'nome');
+
+
+        $authManager = Yii::$app->authManager;
+        $clienteRole = $authManager->getRole('cliente');
+        $clientes = User::find()
+            ->innerJoin('auth_assignment', 'auth_assignment.user_id = user.id')
+            ->andWhere(['auth_assignment.item_name' => $clienteRole->name])
+            ->all();
+        $clientesItems = ArrayHelper::map($clientes, 'id', 'username');
+
+        $estabelecimento = Yii::$app->request->post('estabelecimento_id');
+        $cliente = Yii::$app->request->post('cliente_id');
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'estabelecimentos' => $estabelecimentosItems,
+            'clientes' => $clientesItems,
+            'estabelecimento' => $estabelecimento,
+            'cliente' => $cliente,
+
+
         ]);
     }
 
     /**
-     * Displays a single Fatura model.
+     * Displays a single fatura model.
      * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
@@ -61,17 +107,25 @@ class FaturaController extends Controller
     }
 
     /**
-     * Creates a new Fatura model.
+     * Creates a new fatura model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate()
+    public function actionCreate($estabelecimento_id, $cliente_id)
     {
         $model = new Fatura();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+                $model->estabelecimento_id = $estabelecimento_id;
+                $model->cliente_id = $cliente_id;
+                if ($model->save()) {
+                    return $this->redirect(['linha/createprimeira', 'estabelecimento_id' => $estabelecimento_id, 'cliente_id' => $cliente_id]);
+                } else {
+                    Yii::error('Error saving Fatura model: ' . print_r($model->errors, true));
+                }
+            } else {
+                Yii::error('Error loading Fatura model: ' . print_r($model->errors, true));
             }
         } else {
             $model->loadDefaultValues();
@@ -82,8 +136,10 @@ class FaturaController extends Controller
         ]);
     }
 
+
+
     /**
-     * Updates an existing Fatura model.
+     * Updates an existing fatura model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
      * @return string|\yii\web\Response
@@ -94,6 +150,7 @@ class FaturaController extends Controller
         $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -103,7 +160,7 @@ class FaturaController extends Controller
     }
 
     /**
-     * Deletes an existing Fatura model.
+     * Deletes an existing fatura model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
      * @return \yii\web\Response
@@ -117,7 +174,7 @@ class FaturaController extends Controller
     }
 
     /**
-     * Finds the Fatura model based on its primary key value.
+     * Finds the fatura model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
      * @return Fatura the loaded model

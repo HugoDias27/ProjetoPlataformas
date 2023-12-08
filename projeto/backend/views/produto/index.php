@@ -46,6 +46,10 @@ $this->params['breadcrumbs'][] = $this->title;
                     return $model->preco . '€';
                 },
             ],
+            [
+                'attribute' => 'fornecedor_id',
+                'label' => 'Fornecedor',
+            ],
             'quantidade',
             [
                 'class' => 'yii\grid\ActionColumn',
@@ -62,6 +66,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                 ],
             ],
+
         ],
     ]); ?>
 

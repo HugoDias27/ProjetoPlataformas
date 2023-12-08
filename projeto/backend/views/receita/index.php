@@ -28,17 +28,27 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
             'id',
-            'nome',
+            [
+                'attribute' => 'nome_usuario', // Mostra o nome do usuário
+                'label' => 'Nome do Usuário', // Define o rótulo da coluna
+            ],
             'codigo',
             'local_prescricao',
             'medico_prescricao',
-            //'dosagem',
-            //'data_validade',
-            //'telefone',
-            //'valido',
-            //'posologia',
+            'dosagem',
+            'data_validade',
+            'valido' => [
+                'attribute' => 'valido',
+                'value' => function ($model) {
+                    return $model->valido ? 'Sim' : 'Não';
+                },
+                'filter' => [
+                    0 => 'Não',
+                    1 => 'Sim',
+                ],
+            ],
+            'posologia',
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, ReceitaMedica $model, $key, $index, $column) {

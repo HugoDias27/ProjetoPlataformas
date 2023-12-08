@@ -23,7 +23,7 @@ use Yii;
  * @property Imagem[] $imagens
  * @property Iva $iva
  * @property LinhaFatura[] $linhaFaturas
- * @property LinhasCarrinho[] $linhasCarrinhos
+ * @property LinhaCarrinho[] $linhasCarrinhos
  */
 class Produto extends \yii\db\ActiveRecord
 {
