@@ -12,17 +12,10 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'dta_emissao')->textInput() ?>
+    <?= $form->field($model, 'cliente_id')->dropDownList($clientes, ['prompt' => 'Selecione o cliente']) ?>
 
-    <?= $form->field($model, 'loja')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'estabelecimento_id')->dropDownList($estabelecimentos, ['prompt' => 'Selecione a loja']) ?>
 
-    <?= $form->field($model, 'emissor')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'total_fatura')->textInput() ?>
-
-    <?= $form->field($model, 'cliente_id')->textInput() ?>
-
-    <?= $form->field($model, 'receita_id')->textInput() ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

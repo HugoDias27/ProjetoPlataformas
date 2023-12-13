@@ -17,6 +17,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
+    <?php if (Yii::$app->session->hasFlash('error')): ?>
+        <div class="alert alert-danger">
+            <?= Yii::$app->session->getFlash('error') ?>
+        </div>
+    <?php endif; ?>
+
     <p>
         <?= Html::a('Create Fatura', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
@@ -31,11 +37,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
             'id',
             'dta_emissao',
-            'loja',
-            'emissor',
             'total_fatura',
-            //'cliente_id',
-            //'receita_id',
+            'cliente_id',
+            'estabelecimento_id',
+            //'emissor_id',
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Fatura $model, $key, $index, $column) {

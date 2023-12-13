@@ -10,7 +10,7 @@ use yii\grid\GridView;
 /** @var backend\models\FornecedorSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Fornecedors';
+$this->title = 'Fornecedores';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="fornecedor-index">
@@ -28,7 +28,6 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
             'id',
             'nome',
             'telefone',

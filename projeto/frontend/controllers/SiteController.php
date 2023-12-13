@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\Imagem;
 use frontend\models\ResendVerificationEmailForm;
 use frontend\models\VerifyEmailForm;
 use Yii;
@@ -11,6 +12,8 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use common\models\LoginForm;
+use common\models\Produto;
+use yii\data\Pagination;
 use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
@@ -80,8 +83,28 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $query = Produto::find();
+
+        $paginacao = new Pagination([
+            'defaultPageSize' => 9,
+            'totalCount' => $query->count(),
+        ]);
+
+        $produtos = $query->offset($paginacao->offset)
+            ->limit($paginacao->limit)
+            ->all();
+
+        $imagens = [];
+        foreach ($produtos as $produto) {
+            $primeiraImagem = $produto->getImagens()->orderBy(['id' => SORT_ASC])->one();
+            if ($primeiraImagem) {
+                $imagens[$produto->id] = $primeiraImagem;
+            }
+        }
+
+        return $this->render('index', ['produtos' => $produtos, 'paginacao' => $paginacao, 'imagens' => $imagens]);
     }
+
 
     /**
      * Logs in a user.

@@ -2,14 +2,14 @@
 
 namespace backend\controllers;
 
-use backend\models\Servico;
-use backend\models\ServicoSearch;
 use common\models\Iva;
+use common\models\Servico;
+use common\models\ServicoSearch;
 use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * ServicoController implements the CRUD actions for Servico model.

@@ -2,8 +2,13 @@
 
 namespace backend\controllers;
 
+use backend\models\Estabelecimento;
 use common\models\Fatura;
 use common\models\FaturaSearch;
+use common\models\Profile;
+use common\models\User;
+use Yii;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -68,9 +73,30 @@ class FaturaController extends Controller
     public function actionCreate()
     {
         $model = new Fatura();
+        $estabelecimentos = Estabelecimento::find()->all();
+        $estabelecimentosItems = ArrayHelper::map($estabelecimentos, 'id', 'nome');
+
+
+        $authManager = Yii::$app->authManager;
+        $clienteRole = $authManager->getRole('cliente');
+        $clientes = User::find()
+            ->innerJoin('auth_assignment', 'auth_assignment.user_id = user.id')
+            ->andWhere(['auth_assignment.item_name' => $clienteRole->name])
+            ->all();
+        $clientesItems = ArrayHelper::map($clientes, 'id', 'username');
 
         if ($this->request->isPost) {
+            $perfilEmissor = Profile::findOne(['user_id' => Yii::$app->user->id]);
+            if (!$perfilEmissor) {
+                Yii::$app->session->setFlash('error', 'O utilizador não tem o perfil criado.');
+                return $this->redirect('index');
+            }
+            $model->dta_emissao = date('Y-m-d');
+            $model->emissor_id = Yii::$app->user->id;
+            $model->valortotal = 0;
+            $model->ivatotal = 0;
             if ($model->load($this->request->post()) && $model->save()) {
+
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
@@ -79,6 +105,8 @@ class FaturaController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'estabelecimentos' => $estabelecimentosItems,
+            'clientes' => $clientesItems,
         ]);
     }
 
