@@ -6,10 +6,13 @@ use backend\models\Estabelecimento;
 use common\models\Fatura;
 use common\models\FaturaSearch;
 use common\models\LinhaFatura;
+use common\models\Produto;
 use common\models\Profile;
+use common\models\ReceitaMedica;
 use common\models\Servico;
 use common\models\User;
 use Yii;
+use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -34,6 +37,21 @@ class FaturaController extends Controller
                         'delete' => ['POST'],
                     ],
                 ],
+                'access' => [
+                    'class' => AccessControl::className(),
+                    'rules' => [
+                        [
+                            'actions' => ['view'],
+                            'allow' => true,
+                            'roles' => ['admin', 'funcionario', 'cliente'],
+                        ],
+                        [
+                            'actions' => ['index', 'create', 'update', 'delete'],
+                            'allow' => true,
+                            'roles' => ['admin', 'funcionario'],
+                        ],
+                    ],
+                ]
             ]
         );
     }
@@ -82,6 +100,10 @@ class FaturaController extends Controller
             ->where(['id' => $servicosids])
             ->all();
 
+        $receitasids = ArrayHelper::getColumn($linhasFatura, 'receita_medica_id');
+        $receitas = ReceitaMedica::find()
+            ->where(['id' => $receitasids])
+            ->all();
 
 
         return $this->render('view', [
@@ -91,6 +113,7 @@ class FaturaController extends Controller
             'perfilCliente' => $perfilCliente,
             'linhasFatura' => $linhasFatura,
             'servicos' => $servicos,
+            'receitas' => $receitas,
         ]);
     }
 
@@ -153,7 +176,15 @@ class FaturaController extends Controller
     {
         $fatura = Fatura::find()->where(['id' => $id])->one();
 
+        $linhafatura = LinhaFatura::find()->where(['fatura_id' => $id])->one();
+        $receitaMedicaid = $linhafatura->receita_medica_id;
+
+        $receitaMedica = ReceitaMedica::find()->where(['id' => $receitaMedicaid])->one();
+
+        $receitaMedica->valido = 0;
+
         $fatura->save();
+        $receitaMedica->save();
         return $this->redirect(['index']);
     }
 
@@ -166,6 +197,10 @@ class FaturaController extends Controller
      */
     public function actionDelete($id)
     {
+        $linhasFatura = LinhaFatura::find()->where(['fatura_id' => $id])->all();
+        foreach ($linhasFatura as $linhaFatura) {
+            $linhaFatura->delete();
+        }
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

@@ -14,8 +14,6 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($linhafatura, 'quantidade')->textInput(['type' => 'number']) ?>
 
-    <?= $form->field($linhafatura, 'receita_medica_id')->dropDownList($receitasItems, ['prompt' => 'Selecione a receita medica']) ?>
-
     <?= $form->field($linhafatura, 'servico_id')->dropDownList($servicosItems, ['prompt' => 'Selecione o servico']) ?>
 
     <div class="form-group">
