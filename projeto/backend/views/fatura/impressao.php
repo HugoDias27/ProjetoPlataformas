@@ -15,30 +15,24 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
-                <div class="invoice p-3 mb-3">
-                    <div class="row">
-                        <div class="col-12">
-                            <h4>
-                                <small class="float-right"><?= date('d-m-Y'); ?></small>
-                            </h4>
-                        </div>
+                <div class="row">
+                    <div class="col-md-6 text-right">
+                            <?= Html::img(Yii::$app->request->baseUrl . '/img/logo.png', ['alt' => Yii::$app->name, 'style' => 'float: right; width: 150px; height: 100px;']) ?>
                     </div>
-                    <div class="row invoice-info">
-                        <div class="col-sm-4 invoice-col">
-                            <?= Html::a('De:') ?>
-                            <address>
-                                <?= Html::a('<strong>Nome:</strong> ' . (isset($estabelecimento->nome) ? Html::encode($estabelecimento->nome) : 'Nome não disponível')) ?>
-                                <?= Html::a('<br>') ?>
-                                <?= Html::a('<strong>Morada:</strong> ' . (isset($estabelecimento->morada) ? Html::encode($estabelecimento->morada) : 'Morada não disponível')) ?>
-                                <?= Html::a('<br>') ?>
-                                <?= Html::a('<strong>Telefone:</strong> ' . (isset($estabelecimento->telefone) ? Html::encode($estabelecimento->telefone) : 'Telefone não disponível')) ?>
-                                <?= Html::a('<br>') ?>
-                                <?= Html::a('<strong>Email:</strong> ' . (isset($estabelecimento->email) ? Html::encode($estabelecimento->email) : 'Email não disponível')) ?>
-                            </address>
-                        </div>
-                        <div class="col-sm-4 invoice-col">
-                            <?= Html::a('Para:') ?>
-                            <?= Html::a('<br>') ?>
+                    <div class="col-md-6 text-right">
+                        <h4>
+                            <small><?= date('d-m-Y'); ?></small>
+                            <br>
+                            <strong>Carolo Farmacêutica</strong>
+                        </h4>
+                    </div>
+                </div>
+                </div>
+                <div class="invoice p-3 mb-3" style="position: relative;">
+
+                    <div style="float: right; width: 200px; height: 200px;">
+                        <?= Html::a('Para:') ?>
+                        <address>
                             <?= Html::a('<strong>Nome:</strong> ' . (isset($cliente->username) ? Html::encode($cliente->username) : 'Nome não disponível')) ?>
                             <?= Html::a('<br>') ?>
                             <?= Html::a('<strong>Email:</strong> ' . (isset($cliente->email) ? Html::encode($cliente->email) : 'Email não disponível')) ?>
@@ -50,13 +44,27 @@ $this->params['breadcrumbs'][] = $this->title;
                             <?= Html::a('<strong>Morada:</strong> ' . (isset($perfilCliente->morada) ? Html::encode($perfilCliente->morada) : 'Morada não disponível')) ?>
                             <?= Html::a('<br>') ?>
                             <?= Html::a('<strong>Número de Utente:</strong> ' . (isset($perfilCliente->n_utente) ? Html::encode($perfilCliente->n_utente) : 'Número de Utente não disponível')) ?>
-
-                            <br>
+                        </address>
+                    </div>
+                    <div class="row invoice-info">
+                        <div class="col-sm-6 invoice-col">
+                            De:
+                            <address>
+                                <?= Html::a('<strong>Nome:</strong> ' . (isset($estabelecimento->nome) ? Html::encode($estabelecimento->nome) : 'Online')) ?>
+                                <?= Html::a('<br>') ?>
+                                <?= Html::a('<strong>Morada:</strong> ' . (isset($estabelecimento->morada) ? Html::encode($estabelecimento->morada) : 'Online')) ?>
+                                <?= Html::a('<br>') ?>
+                                <?= Html::a('<strong>Telefone:</strong> ' . (isset($estabelecimento->telefone) ? Html::encode($estabelecimento->telefone) : 'Online')) ?>
+                                <?= Html::a('<br>') ?>
+                                <?= Html::a('<strong>Email:</strong> ' . (isset($estabelecimento->email) ? Html::encode($estabelecimento->email) : 'Online')) ?>
+                            </address>
                         </div>
-
-                        <div class="col-sm-4 invoice-col">
-                            <?= Html::a('<strong>Fatura nº:</strong> ') ?>
-                            <?= Html::a($fatura->id) ?>
+                    </div>
+                        <div class="col-sm-6">
+                            <div class="col-12">
+                                <?= Html::a('<strong>Fatura nº:</strong> ') ?>
+                                <?= Html::a($fatura->id) ?>
+                            </div>
                         </div>
                     </div>
                     <br>
@@ -65,7 +73,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             <table class="table table-striped">
                                 <thead>
                                 <tr>
-                                    <th>Descrição do Serviço</th>
+                                    <th>Descrição</th>
                                     <th>Quantidade</th>
                                     <th>Preço Unitário</th>
                                     <th>IVA</th>
@@ -78,38 +86,31 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <?php if ($linhafatura->servico_id != null) { ?>
                                         <?php foreach ($servicos as $servico) { ?>
                                             <tr>
-                                            <?php if (isset($linhafatura)) { ?>
-                                                <td><?= Html::encode($servico->nome) ?></td>
-
-                                                <td><?= Html::encode($linhafatura->quantidade) ?></td>
-                                                <td><?= Html::encode($linhafatura->precounit) ?></td>
-                                                <td><?= Html::encode($linhafatura->valoriva) ?></td>
-                                                <td><?= Html::encode($linhafatura->valorcomiva) ?></td>
-                                                <td><?= Html::encode($linhafatura->subtotal) ?></td>
-
-                                                </tr>
-                                            <?php } ?>
-                                        <?php }
-                                    } else if
-                                        ($linhafatura->receita_medica_id != null) {
-                                            foreach ($receitas as $receita) { ?>
-                                                <tr>
                                                 <?php if (isset($linhafatura)) { ?>
-                                                    <td><?= Html::encode($receita->codigo) ?></td>
-                                                    <td>
-                                                        <?= Html::encode($linhafatura->quantidade) ?>
-                                                    </td>
-
+                                                    <td><?= Html::encode($servico->nome) ?></td>
+                                                    <td><?= Html::encode($linhafatura->quantidade) ?></td>
                                                     <td><?= Html::encode($linhafatura->precounit) ?></td>
                                                     <td><?= Html::encode($linhafatura->valoriva) ?></td>
                                                     <td><?= Html::encode($linhafatura->valorcomiva) ?></td>
                                                     <td><?= Html::encode($linhafatura->subtotal) ?></td>
-
-                                                    </tr>
                                                 <?php } ?>
-                                            <?php } ?>
-                                        <?php }
-                                } ?>
+                                            </tr>
+                                        <?php } ?>
+                                    <?php } else if ($linhafatura->receita_medica_id != null) { ?>
+                                        <?php foreach ($receitas as $receita) { ?>
+                                            <tr>
+                                                <?php if (isset($linhafatura)) { ?>
+                                                    <td><?= Html::encode($receita->codigo) ?></td>
+                                                    <td><?= Html::encode($linhafatura->quantidade) ?></td>
+                                                    <td><?= Html::encode($linhafatura->precounit) ?></td>
+                                                    <td><?= Html::encode($linhafatura->valoriva) ?></td>
+                                                    <td><?= Html::encode($linhafatura->valorcomiva) ?></td>
+                                                    <td><?= Html::encode($linhafatura->subtotal) ?></td>
+                                                <?php } ?>
+                                            </tr>
+                                        <?php } ?>
+                                    <?php } ?>
+                                <?php } ?>
                                 <?php if (!empty($produtos)) : ?>
                                     <?php foreach ($linhasCarrinho as $linhaCarrinho) : ?>
                                         <tr>
@@ -141,24 +142,17 @@ $this->params['breadcrumbs'][] = $this->title;
                     </div>
                     <!-- Informações de pagamento -->
                     <div class="row">
-                        <div class="col-6">
-                            <?= Html::a('Voltar', ['index'], ['class' => 'btn btn-primary']) ?>
-                            <?php echo Html::a(
-                                'Imprimir Fatura',
-                                ['imprimir', 'id' => $fatura->id],
-                                ['class' => 'btn btn-primary']
-                            ); ?>
-                        </div>
+                        <div class="col-6"></div>
                         <div class="col-6">
                             <div class="table-responsive">
                                 <table class="table">
                                     <tr>
                                         <th style="width:50%">Subtotal:</th>
-                                        <td> <?= $fatura->valortotal - $fatura->ivatotal ?></td>
+                                        <td><?= $fatura->valortotal - $fatura->ivatotal ?></td>
                                     </tr>
                                     <tr>
                                         <th>IVA:</th>
-                                        <td> <?= $fatura->ivatotal ?></td>
+                                        <td><?= $fatura->ivatotal ?></td>
                                     </tr>
                                     <tr>
                                         <th>Total:</th>
@@ -169,4 +163,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
 </section>
