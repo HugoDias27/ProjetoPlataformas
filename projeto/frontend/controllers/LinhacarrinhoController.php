@@ -209,14 +209,22 @@ class LinhacarrinhoController extends Controller
         $produto = $linhaCarrinho->produto;
         $produtoId = $linhaCarrinho->produto_id;
 
-        $receitaMedica = ReceitaMedica::find()->where(['posologia' => $produtoId])->one();
+        $receitaMedica = ReceitaMedica::find()
+            ->where(['posologia' => $produtoId])
+            ->andWhere(['valido' => 0])
+            ->orderBy(['id' => SORT_DESC])
+            ->one();
 
         if ($linhaCarrinho->delete()) {
-            if ($produto) {
+            if ($produto && $receitaMedica) {
                 $produto->quantidade += $quantidadeLinhaCarrinho;
                 $receitaMedica->valido = 1;
                 $produto->save();
                 $receitaMedica->save();
+            }
+            else if ($produto && !$receitaMedica) {
+                $produto->quantidade += $quantidadeLinhaCarrinho;
+                $produto->save();
             }
             return $this->redirect(['carrinhocompra/index']);
         }

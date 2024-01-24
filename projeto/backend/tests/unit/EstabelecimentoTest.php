@@ -40,14 +40,14 @@ class EstabelecimentoTest extends \Codeception\Test\Unit
         $estabelecimento->morada = 'Rua do teste';
         $estabelecimento->telefone = 916743092;
         $estabelecimento->email = 'teste@teste.pt';
-        $estabelecimento->save();
+        $this->assertTrue($estabelecimento->save());
 
         //Teste de atualização dos dados na tabela estabelecimentos
         $estabelecimento = Estabelecimento::find()->where(['nome' => 'Teste Estabelecimento'])->one();
         $estabelecimento->nome = 'Teste Estabelecimento Update';
         $estabelecimento->telefone = 930956789;
         $estabelecimento->email = 'testeupdate@teste.pt';
-        $estabelecimento->save();
+        $this->assertTrue($estabelecimento->save());
 
         //Teste de apagar os dados na tabela estabelecimentos
         $deletedRows = Estabelecimento::deleteAll(['nome' => 'Teste Estabelecimento Update']);

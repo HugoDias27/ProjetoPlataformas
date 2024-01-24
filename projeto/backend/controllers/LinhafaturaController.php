@@ -162,16 +162,15 @@ class LinhafaturaController extends Controller
             $quantidadereceita = $item->dosagem;
         }
 
-
         if ($this->request->isPost && $linhafatura->load(Yii::$app->request->post())) {
             if (!empty($linhafatura->servico_id)) {
                 $linhafatura->precounit = $servicoPreco;
-                $linhafatura->valoriva = $servicoPreco * ($percentservico / 100);
+                $linhafatura->valoriva = number_format($servicoPreco * ($percentservico / 100), 2, '.');
                 $linhafatura->valorcomiva = $servicoPreco + $linhafatura->valoriva;
                 $linhafatura->dta_venda = date('Y-m-d');
             } else if (!empty($linhafatura->receita_medica_id)) {
                 $linhafatura->precounit = $receitaPreco;
-                $linhafatura->valoriva = $receitaPreco * ($percentreceita / 100);
+                $linhafatura->valoriva = number_format($receitaPreco * ($percentreceita / 100), 2, '.');
                 $linhafatura->valorcomiva = $receitaPreco + $linhafatura->valoriva;
                 $linhafatura->dta_venda = date('Y-m-d');
                 $linhafatura->quantidade = $quantidadereceita;
@@ -179,6 +178,8 @@ class LinhafaturaController extends Controller
                 $produtoreceita = Produto::find()->where(['id' => $receitaMedicamento->posologia])->one();
                 $produtoreceita->quantidade -= $linhafatura->quantidade;
                 $produtoreceita->save();
+                $receitaMedicamento->valido = 0;
+                $receitaMedicamento->save();
             }
             // Calcula os totais com base nas linhas de fatura existentes
             foreach ($linhasFaturaExistente as $linha) {
@@ -186,7 +187,7 @@ class LinhafaturaController extends Controller
                 $fatura->ivatotal += $linha->valoriva * $linha->quantidade;
             }
             // Calcula o subtotal da nova linha antes de salvar
-            $linhafatura->subtotal = $linhafatura->quantidade * $linhafatura->valorcomiva;
+            $linhafatura->subtotal = number_format($linhafatura->quantidade * $linhafatura->valorcomiva, 2, '.');
             $linhafatura->fatura_id = $id_fatura;
 
             if ($linhafatura->validate() && $linhafatura->save()) {
@@ -221,7 +222,7 @@ class LinhafaturaController extends Controller
         $linhafatura->quantidade = $this->request->post('quantidade');
         $quantidadenova = $linhafatura->quantidade - $quantidade;
 
-        $linhafatura->subtotal = $linhafatura->valorcomiva * $linhafatura->quantidade;
+        $linhafatura->subtotal = number_format($linhafatura->valorcomiva * $linhafatura->quantidade, 2, '.');
 
         $fatura->valortotal += $linhafatura->valorcomiva * $quantidadenova;
         $fatura->ivatotal += $linhafatura->valoriva * $quantidadenova;
@@ -300,6 +301,9 @@ class LinhafaturaController extends Controller
             }
 
             $fatura->save();
+
+            $receita->valido = 1;
+            $receita->save();
 
             if ($produto) {
                 $this->findModel($id)->delete();

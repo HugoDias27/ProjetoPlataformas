@@ -42,7 +42,8 @@ class DespesaTest extends \Codeception\Test\Unit
         $despesa->dta_despesa = '2021-05-05';
         $despesa->descricao = 'teste';
         $despesa->estabelecimento_id = 1;
-        $despesa->save();
+        $this->assertTrue($despesa->save());
+
 
         //Teste de atualização dos dados na tabela despesas
 
@@ -51,7 +52,7 @@ class DespesaTest extends \Codeception\Test\Unit
         $despesa->dta_despesa = '2021-06-06';
         $despesa->descricao = 'testeupdate';
         $despesa->estabelecimento_id = 1;
-        $despesa->save();
+        $this->assertTrue($despesa->save());
 
         //Teste de apagar os dados na tabela despesas
         $deletedRows = Despesa::deleteAll(['descricao' => 'testeupdate']);

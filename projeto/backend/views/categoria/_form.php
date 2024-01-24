@@ -6,13 +6,14 @@ use yii\widgets\ActiveForm;
 /** @var yii\web\View $this */
 /** @var common\models\Categoria $categoria */
 /** @var yii\widgets\ActiveForm $form */
+
 ?>
 
 <div class="categoria-form">
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($categoria, 'descricao')->dropDownList(['saude_oral' =>'Saúde Oral', 'bens_beleza' => 'Bens de beleza', 'higiene' => 'Higiene']) ?>
+    <?= $form->field($categoria, 'descricao')->dropDownList($categorias) ?>
 
     <div class="form-group">
         <?= Html::submitButton('Criar', ['class' => 'btn btn-success']) ?>

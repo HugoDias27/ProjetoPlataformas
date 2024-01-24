@@ -42,8 +42,7 @@ AppAsset::register($this);
 
         <link href="<?= Yii::$app->request->baseUrl ?>/logo.ico" rel="icon">
         <link href="<?= Yii::$app->request->baseUrl ?>/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-        <link href="<?= Yii::$app->request->baseUrl ?>/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css"
-              rel="stylesheet">
+        <link href="<?= Yii::$app->request->baseUrl ?>/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet">
         <link href="<?= Yii::$app->request->baseUrl ?>/css/bootstrap.min.css" rel="stylesheet">
         <link href="<?= Yii::$app->request->baseUrl ?>/css/style.css" rel="stylesheet">
 

@@ -39,14 +39,15 @@ class IvaTest extends \Codeception\Test\Unit
         $iva->setPercentagem(23);
         $iva->setVigor(1);
         $iva->setDescricao('teste');
-        $iva->save();
+        $this->assertTrue($iva->save());
+
 
         //Teste de atualização dos dados na tabela ivas
         $iva = Iva::find()->where(['descricao' => 'teste'])->one();
         $iva->percentagem = 13;
         $iva->vigor = 0;
         $iva->descricao = 'teste2';
-        $iva->save();
+        $this->assertTrue($iva->save());
 
         //Teste de apagar os dados na tabela ivas
         $deletedRows = Iva::deleteAll(['descricao' => 'teste2']);

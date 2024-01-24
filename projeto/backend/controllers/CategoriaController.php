@@ -8,6 +8,7 @@ use PhpParser\Node\Expr\Throw_;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
@@ -90,9 +91,22 @@ class CategoriaController extends Controller
     // Método que permite criar uma nova categoria
     public function actionCreate()
     {
-        $categoria = new Categoria();
+        $categoriasExistentes = Categoria::find()->all();
+
+        if (count($categoriasExistentes) >= count(['saude_oral', 'bens_beleza', 'higiene'])) {
+            throw new ForbiddenHttpException('Não é possível criar mais categorias, todas as categorias já existem.');
+        }
+        if (count($categoriasExistentes) >= count(['saude_oral'])) {
+            $Lista = ['bens_beleza' => 'Bens de Beleza', 'higiene' => 'Higiene'];
+        }
+        if (count($categoriasExistentes) >= count(['bens_beleza'])) {
+            $Lista = ['higiene' => 'Higiene'];
+        }
+
 
         if (\Yii::$app->user->can('createCategorias')) {
+            $categoria = new Categoria();
+
             if ($this->request->isPost) {
                 if ($categoria->load($this->request->post()) && $categoria->save()) {
                     return $this->redirect(['view', 'id' => $categoria->id]);
@@ -102,11 +116,13 @@ class CategoriaController extends Controller
             }
 
             return $this->render('create', [
-                'categoria' => $categoria,
+                'categoria' => $categoria, 'categorias' => $Lista
             ]);
+        } else {
+            throw new ForbiddenHttpException('Você não tem permissões para acessar esta página');
         }
-        throw new NotFoundHttpException('Não tem permissões para aceder a esta página');
     }
+
 
     /**
      * Updates an existing Categoria model.
@@ -120,11 +136,28 @@ class CategoriaController extends Controller
     {
         $categoria = $this->findModel($id);
 
+        $categoriasExistentes = Categoria::find()->all();
+
+        if (count($categoriasExistentes) >= count(['saude_oral', 'bens_beleza', 'higiene'])) {
+            throw new ForbiddenHttpException('Não é possível editar a categorias, todas as categorias já existem.');
+        }
+
+        if ($categoria->descricao == 'saude_oral') {
+            $Lista = ['bens_beleza' => 'Bens de Beleza', 'higiene' => 'Higiene'];
+        }
+        if ($categoria->descricao == 'bens_beleza') {
+            $Lista = ['saude_oral' => 'Saúde Oral', 'higiene' => 'Higiene'];
+        }
+        if ($categoria->descricao == 'higiene') {
+            $Lista = ['saude_oral' => 'Saúde Oral', 'bens_beleza' => 'Bens de Beleza'];
+        }
+
+
         if (\Yii::$app->user->can('updateCategorias')) {
             if ($this->request->isPost && $categoria->load($this->request->post()) && $categoria->save()) {
                 return $this->redirect(['view', 'id' => $categoria->id]);
             }
-            return $this->render('update', ['categoria' => $categoria]);
+            return $this->render('update', ['categoria' => $categoria, 'categorias' => $Lista]);
         }
         throw new NotFoundHttpException('Não tem permissões para aceder a esta página');
     }

@@ -7,6 +7,7 @@ use common\models\CarrinhoCompraSearch;
 use common\models\Fatura;
 use common\models\LinhaCarrinho;
 use common\models\Produto;
+use common\models\Profile;
 use common\models\ReceitaMedica;
 use common\models\User;
 use Yii;
@@ -76,6 +77,7 @@ class CarrinhocompraController extends Controller
             ]);
 
             $produtosComReceita = [];
+            $produtoCodigo = [];
 
             foreach ($linhasCarrinho2 as $linha) {
                 $produtoId = $linha->produto_id;
@@ -117,44 +119,53 @@ class CarrinhocompraController extends Controller
     // Método que permite criar o carrinho de compras
     public function actionCreate($produtoid)
     {
+        $perfil = Profile::find()->where(['user_id' => Yii::$app->user->id])->one();
+
         if (!Yii::$app->user->isGuest) {
-            $userId = Yii::$app->user->id;
-            $carrinhoCompras = new CarrinhoCompra();
-            $produto = Produto::findOne($produtoid);
+            if ($perfil == null) {
+                Yii::$app->session->setFlash('error', 'Não tem perfil criado! Por favor, crie um perfil para poder comprar.');
+                return $this->redirect(['profile/create', 'id' => Yii::$app->user->id]);
+            } else {
+                $userId = Yii::$app->user->id;
+                $carrinhoCompras = new CarrinhoCompra();
+                $produto = Produto::findOne($produtoid);
 
-            if ($produto->quantidade != 0) {
-                $prescricao_medica = $produto->prescricao_medica;
+                if ($produto->quantidade != 0) {
+                    $prescricao_medica = $produto->prescricao_medica;
 
-                if ($prescricao_medica == 0) {
-                    $ultimoCarrinho = CarrinhoCompra::find()
-                        ->where(['cliente_id' => $userId, 'fatura_id' => null])
-                        ->orderBy(['dta_venda' => SORT_DESC])
-                        ->one();
+                    if ($prescricao_medica == 0) {
+                        $ultimoCarrinho = CarrinhoCompra::find()
+                            ->where(['cliente_id' => $userId, 'fatura_id' => null])
+                            ->orderBy(['dta_venda' => SORT_DESC])
+                            ->one();
 
-                    if ($ultimoCarrinho === null) { // Se não existir nenhum carrinho de compras
-                        $carrinhoCompras->dta_venda = date('Y-m-d');
-                        $carrinhoCompras->quantidade = 0;
-                        $carrinhoCompras->valortotal = 0;
-                        $carrinhoCompras->ivatotal = 0;
-                        $carrinhoCompras->cliente_id = $userId;
+                        if ($ultimoCarrinho === null) { // Se não existir nenhum carrinho de compras
+                            $carrinhoCompras->dta_venda = date('Y-m-d');
+                            $carrinhoCompras->quantidade = 0;
+                            $carrinhoCompras->valortotal = 0;
+                            $carrinhoCompras->ivatotal = 0;
+                            $carrinhoCompras->cliente_id = $userId;
 
-                        if ($carrinhoCompras->save()) { // criar o carrinho de compras
+                            if ($carrinhoCompras->save()) { // criar o carrinho de compras
+                                return $this->redirect(['linhacarrinho/create', 'produtoid' => $produtoid]);
+                            }
+                        } else { // Se já existir um carrinho de compras adicionar o produto a esse carrinho
                             return $this->redirect(['linhacarrinho/create', 'produtoid' => $produtoid]);
                         }
-                    } else { // Se já existir um carrinho de compras adicionar o produto a esse carrinho
-                        return $this->redirect(['linhacarrinho/create', 'produtoid' => $produtoid]);
+                    } else { // Se o produto for com receita médica
+                        return $this->redirect(['receitamedica/verificar', 'produtoid' => $produto->id]);
                     }
-                } else { // Se o produto for com receita médica
-                    return $this->redirect(['receitamedica/verificar', 'produtoid' => $produto->id]);
+                } else { // Se o produto não existir
+                    return $this->redirect(Yii::$app->getHomeUrl());
                 }
-            } else { // Se o produto não existir
-                return $this->redirect(Yii::$app->getHomeUrl());
             }
         } else { // Se o utilizador não estiver logado
             return $this->redirect(['/site/login']);
         }
+
         return $this->redirect(Yii::$app->getHomeUrl()); // caso não seja nenhuma das opções anteriores
     }
+
 
     // Método que permite criar o carrinho de compras com produtos com receita médica
     public function actionCreatecomreceita($produtoid, $receitamedicaid)

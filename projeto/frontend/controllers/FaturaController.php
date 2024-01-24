@@ -109,8 +109,6 @@ class FaturaController extends Controller
                 }
             }
 
-
-
             return $this->render('view', [
                 'fatura' => $fatura,
                 'cliente' => $cliente,

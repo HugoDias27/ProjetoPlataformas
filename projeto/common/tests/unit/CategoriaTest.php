@@ -32,12 +32,13 @@ class CategoriaTest extends \Codeception\Test\Unit
         //Teste de inserção dos dados na tabela categorias
         $categoria = new Categoria();
         $categoria->descricao = 'Descricao categoria';
-        $categoria->save();
+        $this->assertTrue($categoria->save());
+
 
         //Teste de atualização dos dados na tabela categorias
         $categoria = Categoria::find()->where(['descricao' => 'Descricao categoria'])->one();
         $categoria->descricao = 'Descricao categoria update';
-        $categoria->save();
+        $this->assertTrue($categoria->save());
 
         //Teste de apagar os dados na tabela categorias
         $deletedRows = Categoria::deleteAll(['descricao' => 'Descricao categoria update']);

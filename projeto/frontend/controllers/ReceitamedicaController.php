@@ -97,7 +97,7 @@ class ReceitamedicaController extends Controller
                 ->one();
 
             if ($receitaMedica != null) {
-                return $this->redirect(['carrinhocompra/createcomreceita', 'produtoid' => $produtoid, 'receitamedicaid' => $receitaMedica->id]);
+                return $this->redirect(['carrinhocompra/createcomreceita', 'produtoid' => $produtoid, 'receitamedicaid' => $receitaMedica->id, 'codigo' => $codigo]);
             } else {
                 Yii::$app->session->setFlash('error', 'A receita médica não corresponde ao produto fornecido ou não está associado ao utilizador logado.');
 
